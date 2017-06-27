@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap 
+	PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" 
+	"http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="Resource">
+	<typeAlias alias="resourceDTO" type="com.jk.model.Resource"/>
+	<resultMap class="resourceDTO" id="resourceResult">
+		<result property="id" column="id"/>
+		<result property="createdatetime" column="createdatetime"/>
+		<result property="description" column="description"/>
+		<result property="iconcls" column="iconcls"/>
+		<result property="name" column="name"/>
+		<result property="seq" column="seq"/>
+		<result property="target" column="target"/>
+		<result property="updatetime" column="updatetime"/>
+		<result property="url" column="url"/>
+		<result property="pid" column="pid"/>
+		<result property="type" column="type"/>
+	</resultMap>
+	
+	<!-- 根据不同的用户查询出来不同的菜单表  ztree.jsp里面  0：展示菜单  1:权限  不展示 -->
+	<select id="getResourceZtree" parameterClass="com.jk.model.User"  resultClass="java.util.LinkedHashMap">
+		select r.id,r.pid,r.name,r.url,r.target,r.iconcls from user_role ur,role_resource rr,t_resource r 
+		where ur.roleId =rr.roleId 
+		and rr.resourceId=r.id
+		and ur.userId=#id#
+		and r.type=0 
+		order by r.seq
+	</select>
+	
+	<!--  查询权限树形展示  -->
+	<!-- <select id="getNodesResource" parameterClass="resourceDTO" resultClass="java.util.LinkedHashMap">
+		 select * from t_resource
+		<dynamic prepend="where">
+			<isNotEmpty property="id" prepend="and">
+				pid = #id#
+			</isNotEmpty>
+			<isNotEmpty property="type" prepend="and">
+			 type=1
+			</isNotEmpty>
+		</dynamic> 
+		
+		 select r.name ,r.id ,r.pid,r.type from role_resource rr ,user_role ur , t_role role ,t_resource r 
+		where ur.roleId = rr.roleId 
+		and rr.resourceId=r.id
+		and rr.roleId=role.id
+		and ur.roleId=1
+		and r.type =1
+		
+	</select> -->
+	
+	
+</sqlMap>

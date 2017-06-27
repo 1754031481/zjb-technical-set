@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap 
+	PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" 
+	"http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="Member">
+	<typeAlias alias="memberDto" type="com.jk.model.Member"/>
+	<resultMap class="memberDto" id="memberResult">
+		<result property="memId" column="memId"/>
+		<result property="memName" column="memName"/>
+		<result property="createTime" column="createTime"/>
+		<result property="updateTime" column="updateTime"/>
+	</resultMap>
+	
+	
+	
+	<select id="showMember" resultClass="java.lang.Integer" remapResults="true">
+	<!-- select B.memId,B.createTime ,count(memId) from t_member B  where  B.createTime IS NOT NULL  AND
+	 B.createTime between createTime=#createTime#  and createTime=#createTime#   -->
+	 select count(memId) countArray from t_member where 1=1 AND   
+	 month(createTime) = #start#
+	</select>
+	
+	
+</sqlMap>

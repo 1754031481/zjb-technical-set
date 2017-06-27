@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap 
+	PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" 
+	"http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="Menu">
+	<typeAlias alias="menu" type="com.jk.model.Menu"/>
+	<resultMap class="menu" id="menuResult">
+		<result property="id" column="id"/>
+		<result property="name" column="name"/>
+		<result property="pid" column="pid"/>
+		<result property="icon" column="icon"/>
+		<result property="url" column="url"/>
+		<result property="target" column="target"/>
+		<result property="type" column="type"/>
+	</resultMap>
+	
+	<select id="menuList" parameterClass="menu" resultMap="menuResult">
+	select * from t_ztree
+		<dynamic prepend="where">
+				<isNotEmpty property="name" prepend="and">
+					name like '%$name$%'
+				</isNotEmpty>
+			</dynamic>
+	</select>
+	<!-- 批量添加菜单节点信息  poi -->
+	<insert id="insertMenu" parameterClass="java.util.List">
+		<![CDATA[   
+        insert into t_ztree
+        (    
+            name, 
+            icon, 
+            url,
+            target            
+        ) values   
+        ]]>  
+        <iterate conjunction =",">     
+        <![CDATA[   
+            ( 
+                #menu[].name#, 
+                #menu[].icon#, 
+                #menu[].url#, 
+                #menu[].target# 
+            )   
+        ]]>     
+        </iterate>  
+	</insert>
+	
+	
+	
+	
+	<!-- 查询子节点 -->
+	<select id="getMenuNodes" parameterClass="menu" resultMap="menuResult">
+		select * from t_ztree
+		<dynamic prepend="where">
+			<isNotEmpty property="id" prepend="and">
+				pid = #id#
+			</isNotEmpty>
+		</dynamic>
+	</select>
+	<!-- 查询父节点 -->
+	<select id="getMenuAsyncNodes" parameterClass="menu" resultMap="menuResult">
+		select * from t_ztree where pid is null
+	</select>
+	
+	<insert id="addMenu" parameterClass="menu">
+		insert into t_ztree (name,pid,icon,url,target,type) values(#name#,#pid#,#icon#,#url#,#target#,#type#)
+	</insert>
+	
+	<delete id="deleteMenu" parameterClass="menu">
+		delete from t_ztree where id=#id#
+	</delete>
+	
+	<update id="updateAfterSave" parameterClass="menu">
+		update t_ztree set name=#name#,icon=#icon#,url=#url#,target=#target#,type=#type# where id=#id#
+	</update>
+</sqlMap>
